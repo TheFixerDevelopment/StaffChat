@@ -1,7 +1,7 @@
 name: StaffChat
 version: 2.0.0
 api: [3.0.0-ALPHA7]
-author: Thunder33345
+author: Thunder33345 & Zeao
 website: "https://github.com/ThunderDoesPlugins/StaffChat"
 description: "Private Staff Chat Plugin"
 main: Thunder33345\StaffChat\StaffChat
