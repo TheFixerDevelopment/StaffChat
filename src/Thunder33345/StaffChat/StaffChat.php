@@ -280,7 +280,7 @@ class StaffChat extends PluginBase implements Listener
     }
   }
 
-  public function onJoin(PlayerJoinEvent $event)
+  t_public function onJoin(PlayerJoinEvent $event)
   {
     if(!$event->getPlayer()->hasPermission(self::permRead) AND !$event->getPlayer()->hasPermission(self::permChat)) return;
     if(!(bool)$this->getConfig()->get('joinleave')) return;
@@ -289,7 +289,7 @@ class StaffChat extends PluginBase implements Listener
     $this->rawBroadcast($msg);
   }
 
-  public function onLeave(PlayerQuitEvent $event)
+  t_public function onLeave(PlayerQuitEvent $event)
   {
     if(!$event->getPlayer()->hasPermission(self::permRead) AND !$event->getPlayer()->hasPermission(self::permChat)) return;
     if(!(bool)$this->getConfig()->get('joinleave')) return;
@@ -298,7 +298,7 @@ class StaffChat extends PluginBase implements Listener
     $this->rawBroadcast($msg);
   }
 
-  public function onChat(PlayerCommandPreprocessEvent $event)
+  t_public function onChat(PlayerCommandPreprocessEvent $event)
   {
     $message = $event->getMessage();
     $player = $event->getPlayer();
