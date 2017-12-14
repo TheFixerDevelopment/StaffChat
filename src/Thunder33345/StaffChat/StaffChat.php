@@ -59,13 +59,13 @@ class StaffChat extends PluginBase implements Listener
 
   }
 
-  private function rawBroadcast($message)
+  private function rawBroadcast(string $message)
   {
     foreach($this->getReadPlayers() as $player) $player->sendMessage($message);
     if($this->console) $this->getServer()->getLogger()->info($this->consolePrefix.$message);
   }
 
-  private function playerBroadcast(Player $player,$message)
+  private function playerBroadcast(Player $player, string $message)
   {
     if(strlen($this->format) <= 0) $this->format = $this->replaceColour($this->getConfig()->get('player-format'));
     $formatted = str_replace('%player%',$player->getName(),$this->format);
@@ -74,11 +74,11 @@ class StaffChat extends PluginBase implements Listener
     $this->rawBroadcast($formatted);
   }
 
-  private function consoleBroadcast(CommandSender $sender,$message)
+  private function consoleBroadcast(CommandSender $sender, string $message)
   {
     if($sender instanceof Player) {
       $this->playerBroadcast($sender,$message);
-      return;
+      return true;
     }
     if(strlen($this->format) <= 0) $this->format = $this->replaceColour($this->getConfig()->get('player-format'));
     $formatted = str_replace('%player%',$sender->getName(),$this->format);
@@ -92,7 +92,7 @@ class StaffChat extends PluginBase implements Listener
    * @param $message string Your message to be sent to users
    * @param string $format Your format, overwrites the defualt user prefered format, you are suggested to leave it as it is
    */
-  public function pluginBroadcast($pluginName,$message,$format = '')
+  public function pluginBroadcast($pluginName, string $message, string $format = '')
   {
     if(strlen($this->pluginFormat) <= 0) $this->pluginFormat = $this->replaceColour($this->getConfig()->get('plugin-format'));
     if(strlen($format) == 0) $format = $this->pluginFormat; else $format = $this->replaceColour($format);
@@ -101,7 +101,7 @@ class StaffChat extends PluginBase implements Listener
     $this->rawBroadcast($formatted);
   }
 
-  private function phraseFunctions(Player $player,$message)
+  private function phraseFunctions(Player $player, string $message)
   {
     $functions = ['$pos','$ping','$near'];
     foreach($functions as $function){
@@ -138,7 +138,7 @@ class StaffChat extends PluginBase implements Listener
     return $message;
   }
 
-  public function onCommand(CommandSender $sender,Command $command,$label,array $args)
+  public function onCommand(CommandSender $sender, Command $command, string $label, array $args) : bool {
   {
     if(!isset($args[0])) $args[0] = "help";
     switch($args[0]){
@@ -215,7 +215,7 @@ class StaffChat extends PluginBase implements Listener
       case "check":
         if(!$sender->hasPermission('staffchat.check')) {
           $sender->sendMessage(self::errPerm);
-          return;
+          return true;
         }
         if(!isset($args[1])) {
           if($sender instanceof Player) {
@@ -228,7 +228,7 @@ class StaffChat extends PluginBase implements Listener
         }
         if(($player = $this->getServer()->getPlayer($args[1])) === null) {
           $sender->sendMessage('Player "'.$args[1].'" cant be found');
-          return;
+          return true;
         }
         $sender->sendMessage('Status of "'.$player->getName().'"');
         $sender->sendMessage('Can chat: '.$this->readableTrueFalse($player->hasPermission(self::permChat)),'yes','no');
@@ -238,7 +238,7 @@ class StaffChat extends PluginBase implements Listener
       case "list":
         if(!$sender->hasPermission('staffchat.list')) {
           $sender->sendMessage(self::errPerm);
-          return;
+          return true;
         }
         $canChatAndRead = [];
         $canChat = [];
@@ -307,21 +307,21 @@ class StaffChat extends PluginBase implements Listener
     if($sub === $this->prefix) {
       $event->setCancelled(true);
       if(!$player->hasPermission(self::permChat)) {
-        return;
+        return true;
       }
       $message = substr($message,strlen($this->prefix));
       $this->playerBroadcast($player,$message);
     } elseif($this->isChatting($player)) {
       if(!$player->hasPermission(self::permChat)) {
         $this->setChatting($player,false);
-        return;
+        return true;
       }
       $event->setCancelled(true);
       $this->playerBroadcast($player,$message);
     }
   }
 
-  private function getGamemode($mode)
+  private function getGamemode(string $mode)
   {
     switch((int)$mode){
       case Player::SURVIVAL:
@@ -347,7 +347,7 @@ class StaffChat extends PluginBase implements Listener
    * @return string
    * Formatted String
    */
-  private function replaceColour($string,$trigger = "![*]"): string
+  private function replaceColour(string $string, string $trigger = "![*]"): string
   {
     preg_match('/(.*)\*(.*)/',$trigger,$trim);
     preg_match_all('/'.preg_quote($trim[1]).'([A-Z a-z \_]*)'.preg_quote($trim[2]).'/',$string,$matches);
@@ -397,7 +397,7 @@ class StaffChat extends PluginBase implements Listener
    * @param $player string|Player|CommandSender Player to set
    * @param bool $state
    */
-  public function setChatting($player,bool $state)
+  public function setChatting($player, string|Player|CommandSender Player bool $state)
   {
     if($player instanceof CommandSender) if($player instanceof Player) $player = $player->getName(); else return;
     $player = strtolower($player);
@@ -411,7 +411,7 @@ class StaffChat extends PluginBase implements Listener
    * @param string $false what to return if false
    * @return string result in string
    */
-  public function getReadableState($player,string $true = "On",string $false = "Off"): string
+  public function getReadableState($player, string|Player|CommandSender string $true = "On", string $false = "Off"): string
   {
     return $this->readableTrueFalse($this->isChatting($player),$true,$false);
   }
