@@ -59,7 +59,7 @@ class StaffChat extends PluginBase implements Listener
     if($this->console) $this->getServer()->getLogger()->info('[Staff Chat] '.$formatted);
   }
 
-  public function onCommand(CommandSender $sender,Command $command,$label,array $args)
+  public function onCommand(CommandSender $sender,Command $command,string $label,array $args) : bool
   {
     if(!isset($args[0])) $args[0] = "help";
     switch($args[0]){
@@ -157,7 +157,7 @@ class StaffChat extends PluginBase implements Listener
     if($sub == $this->prefix) {
       if(!$player->hasPermission(self::permChat)) {
         $player->sendMessage(self::errPerm);
-        return;
+        return true;
       }
       $event->setCancelled(true);
       $message = substr($message,strlen($this->prefix));
@@ -165,7 +165,7 @@ class StaffChat extends PluginBase implements Listener
     } elseif($this->isChatting($player)) {
       if(!$player->hasPermission(self::permChat)) {
         $this->setChatting($player,false);
-        return;
+        return true;
       }
       $event->setCancelled(true);
       $this->broadcast($player->getName(),$message);
